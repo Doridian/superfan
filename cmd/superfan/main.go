@@ -30,7 +30,6 @@ func runLoop(therm thermal.Driver, curve curve.CurveDriver, ctrl control.Driver)
 	}
 
 	if currentSpeed == speed {
-		log.Printf("[NOP] Temperature: %.0f, Fan speed: %.f%%", temp, currentSpeed*100)
 		return
 	}
 
