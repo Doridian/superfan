@@ -12,8 +12,38 @@ import (
 	"github.com/FoxDenHome/superfan/drivers/thermal"
 )
 
+func runLoop(therm thermal.Driver, curve curve.CurveDriver, ctrl control.Driver) {
+	temp, err := therm.GetTemperature()
+	if err != nil {
+		log.Printf("Error getting temperature: %v", err)
+		return
+	}
+	speed, err := curve.GetFanSpeedFor(temp)
+	if err != nil {
+		log.Printf("Error getting target fan speed: %v", err)
+		return
+	}
+	currentSpeed, err := ctrl.GetFanSpeed()
+	if err != nil {
+		log.Printf("Error getting current fan speed: %v", err)
+		return
+	}
+
+	if currentSpeed == speed {
+		log.Printf("[NOP] Temperature: %.0f, Fan speed: %.f%%", temp, currentSpeed*100)
+		return
+	}
+
+	err = ctrl.SetFanSpeed(speed)
+	if err != nil {
+		log.Printf("Error setting fan speed: %v", err)
+		return
+	}
+	log.Printf("[SET] Temperature: %.0f, Fan speed: %.0f%%", temp, speed*100)
+}
+
 func main() {
-	ctrl := control.X10IPMIDriver{
+	ctrl := &control.X10IPMIDriver{
 		IPMIDriver: control.IPMIDriver{
 			DeviceIndex: 0,
 		},
@@ -27,7 +57,7 @@ func main() {
 	nameFilterMap := make(map[string]bool)
 	nameFilterMap["Package id 0"] = true
 	nameFilterMap["Package id 1"] = true
-	therm := thermal.LMSensorsDriver{
+	therm := &thermal.LMSensorsDriver{
 		Aggregation: thermal.AGGREGATE_MAX,
 		NameFilter:  nameFilterMap,
 	}
@@ -37,7 +67,7 @@ func main() {
 	}
 	defer therm.Close()
 
-	curve := curve.FixedCurveDriver{
+	curve := &curve.FixedCurveDriver{
 		Thresholds: []*curve.FixedThreshold{
 			{
 				Temperature: 10.0,
@@ -70,41 +100,15 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	shouldRun := true
-	go func() {
-		<-sigs
-		shouldRun = false
-	}()
+runLoopFor:
+	for {
+		runLoop(therm, curve, ctrl)
 
-	for shouldRun {
-		time.Sleep(5 * time.Second)
-
-		temp, err := therm.GetTemperature()
-		if err != nil {
-			log.Printf("Error getting temperature: %v", err)
-			continue
+		select {
+		case <-sigs:
+			break runLoopFor
+		case <-time.After(5 * time.Second):
 		}
-		speed, err := curve.GetFanSpeedFor(temp)
-		if err != nil {
-			log.Printf("Error getting target fan speed: %v", err)
-			continue
-		}
-		currentSpeed, err := ctrl.GetFanSpeed()
-		if err != nil {
-			log.Printf("Error getting current fan speed: %v", err)
-			continue
-		}
-
-		if currentSpeed == speed {
-			log.Printf("[NOP] Temperature: %.0f, Fan speed: %.f%%", temp, currentSpeed*100)
-			continue
-		}
-
-		err = ctrl.SetFanSpeed(speed)
-		if err != nil {
-			log.Printf("Error setting fan speed: %v", err)
-			continue
-		}
-		log.Printf("[SET] Temperature: %.0f, Fan speed: %.0f%%", temp, speed*100)
 	}
+	time.Sleep(1 * time.Second)
 }
