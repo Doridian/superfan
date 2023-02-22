@@ -12,16 +12,6 @@ import (
 	"github.com/FoxDenHome/superfan/drivers/thermal"
 )
 
-func registerShutdownSignals(callback func()) {
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		<-sigs
-		callback()
-	}()
-}
-
 func main() {
 	ctrl := control.X10IPMIDriver{
 		IPMIDriver: control.IPMIDriver{
