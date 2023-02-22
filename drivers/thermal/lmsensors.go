@@ -18,7 +18,7 @@ type LMSensorsDriver struct {
 }
 
 type lmSensorsSensor = map[string]float64
-type lmSensorsDevice = map[string]lmSensorsSensor
+type lmSensorsDevice = map[string]interface{}
 type lmSensorsJSON = map[string]lmSensorsDevice
 
 func (d *LMSensorsDriver) Init() error {
@@ -50,7 +50,7 @@ func (d *LMSensorsDriver) GetTemperature() (float64, error) {
 			}
 
 			var sensorValue float64 = -1
-			for sensorField, sensorFieldValue := range sensor {
+			for sensorField, sensorFieldValue := range sensor.(lmSensorsSensor) {
 				if sensorField[len(sensorField)-5:] != "_input" {
 					continue
 				}
