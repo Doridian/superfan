@@ -1,6 +1,9 @@
 package control
 
-import "strconv"
+import (
+	"log"
+	"strconv"
+)
 
 type X10IPMIDriver struct {
 	IPMIDriver
@@ -35,6 +38,7 @@ func (d *X10IPMIDriver) GetFanSpeed() (float64, error) {
 	if err != nil {
 		return 0, err
 	}
+	log.Printf("Fan stuff: %v %v", resp, string(resp))
 	speed, err := strconv.ParseFloat(string(resp), 64)
 	return speed / 100, err
 }
