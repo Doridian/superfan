@@ -2,12 +2,25 @@ package main
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/FoxDenHome/superfan/drivers/control"
 	"github.com/FoxDenHome/superfan/drivers/curve"
 	"github.com/FoxDenHome/superfan/drivers/thermal"
 )
+
+func registerShutdownSignals(callback func()) {
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-sigs
+		callback()
+	}()
+}
 
 func main() {
 	ctrl := control.X10IPMIDriver{
@@ -64,7 +77,16 @@ func main() {
 	}
 	defer curve.Close()
 
-	for {
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	shouldRun := true
+	go func() {
+		<-sigs
+		shouldRun = false
+	}()
+
+	for shouldRun {
 		time.Sleep(5 * time.Second)
 
 		temp, err := therm.GetTemperature()
