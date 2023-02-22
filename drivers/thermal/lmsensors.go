@@ -56,7 +56,7 @@ func (d *LMSensorsDriver) GetTemperature() (float64, error) {
 
 			var sensorValue float64 = -1
 			for sensorField, sensorFieldValue := range sensorWant {
-				if sensorField[len(sensorField)-5:] != "_input" {
+				if sensorField[len(sensorField)-6:] != "_input" {
 					continue
 				}
 				if sensorField[:4] != "temp" {
