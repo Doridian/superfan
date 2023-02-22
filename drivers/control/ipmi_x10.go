@@ -1,5 +1,9 @@
 package control
 
+import (
+	"fmt"
+)
+
 type X10IPMIDriver struct {
 	IPMIDriver
 }
@@ -32,6 +36,9 @@ func (d *X10IPMIDriver) GetFanSpeed() (float64, error) {
 	resp, err := d.dev.RawCmd([]byte{0x30, 0x70, 0x66, 0x00, 0x00})
 	if err != nil {
 		return 0, err
+	}
+	if len(resp) != 2 || resp[0] != 0 {
+		return 0, fmt.Errorf("unexpected response %v", resp)
 	}
 	return float64(resp[1]) / 100, err
 }
