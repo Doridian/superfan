@@ -12,34 +12,38 @@ import (
 	"github.com/FoxDenHome/superfan/drivers/thermal"
 )
 
-func runLoop(therm thermal.Driver, curve curve.CurveDriver, ctrl control.Driver) {
+func runLoop(therm thermal.Driver, curve curve.CurveDriver, ctrl control.Driver) bool {
 	temp, err := therm.GetTemperature()
 	if err != nil {
 		log.Printf("Error getting temperature: %v", err)
-		return
+		return false
 	}
 	speed, err := curve.GetFanSpeedFor(temp)
 	if err != nil {
 		log.Printf("Error getting target fan speed: %v", err)
-		return
+		return false
 	}
 	currentSpeed, err := ctrl.GetFanSpeed()
 	if err != nil {
 		log.Printf("Error getting current fan speed: %v", err)
-		return
+		return false
 	}
 
 	if currentSpeed == speed {
-		return
+		return false
 	}
 
 	err = ctrl.SetFanSpeed(speed)
 	if err != nil {
 		log.Printf("Error setting fan speed: %v", err)
-		return
+		return false
 	}
 	log.Printf("[SET] Temperature: %.0f, Fan speed: %.0f%%", temp, speed*100)
+	return true
 }
+
+const shortSleep = 5 * time.Second
+const longSleep = 15 * time.Second
 
 func main() {
 	ctrl := &control.X10IPMIDriver{
@@ -102,12 +106,16 @@ func main() {
 	time.Sleep(100 * time.Millisecond)
 runLoopFor:
 	for {
-		runLoop(therm, curve, ctrl)
+		sleepTime := shortSleep
+		didChange := runLoop(therm, curve, ctrl)
+		if didChange {
+			sleepTime = longSleep
+		}
 
 		select {
 		case <-sigs:
 			break runLoopFor
-		case <-time.After(5 * time.Second):
+		case <-time.After(sleepTime):
 		}
 	}
 	time.Sleep(100 * time.Millisecond)
