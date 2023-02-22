@@ -100,6 +100,7 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
+	time.Sleep(100 * time.Millisecond)
 runLoopFor:
 	for {
 		runLoop(therm, curve, ctrl)
@@ -110,5 +111,5 @@ runLoopFor:
 		case <-time.After(5 * time.Second):
 		}
 	}
-	time.Sleep(1 * time.Second)
+	time.Sleep(100 * time.Millisecond)
 }
