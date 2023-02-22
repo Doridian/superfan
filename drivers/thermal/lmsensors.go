@@ -44,20 +44,29 @@ func (d *LMSensorsDriver) GetTemperature() (float64, error) {
 	var val float64 = -1
 	var count int = 0
 	for _, device := range data {
-		for sensorName, sensor := range device {
+		for sensorName, sensorRaw := range device {
 			if len(d.NameFilter) > 0 && !d.NameFilter[sensorName] {
 				continue
 			}
 
+			sensorWant, ok := sensorRaw.(map[string]interface{})
+			if !ok {
+				continue
+			}
+
 			var sensorValue float64 = -1
-			for sensorField, sensorFieldValue := range sensor.(lmSensorsSensor) {
+			for sensorField, sensorFieldValue := range sensorWant {
 				if sensorField[len(sensorField)-5:] != "_input" {
 					continue
 				}
 				if sensorField[:4] != "temp" {
 					continue
 				}
-				sensorValue = sensorFieldValue
+				sensorValue, ok = sensorFieldValue.(float64)
+				if !ok {
+					sensorValue = -1
+					continue
+				}
 				break
 			}
 
