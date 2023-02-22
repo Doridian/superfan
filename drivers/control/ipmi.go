@@ -5,11 +5,12 @@ import (
 )
 
 type IPMIDriver struct {
-	dev *ipmi.IPMI
+	dev         *ipmi.IPMI
+	DeviceIndex int
 }
 
 func (d *IPMIDriver) Init() error {
-	dev, err := ipmi.Open(0)
+	dev, err := ipmi.Open(d.DeviceIndex)
 	if err != nil {
 		return err
 	}

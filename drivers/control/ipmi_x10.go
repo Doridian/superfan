@@ -10,10 +10,37 @@ func (d *X10IPMIDriver) Init() error {
 		return err
 	}
 	// Set fan mode FULL
+	_, err = d.dev.RawCmd([]byte{0x30, 0x45, 0x01, 0x01})
+	if err != nil {
+		return err
+	}
 	return nil
+}
+
+func (d *X10IPMIDriver) SetFanSpeed(speed float64) error {
+	speedByte := byte(speed * 100)
+	for i := byte(0); i < 2; i++ {
+		_, err := d.dev.RawCmd([]byte{0x30, 0x70, 0x66, 0x01, i, speedByte})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (d *X10IPMIDriver) GetFanSpeed() (float64, error) {
+	resp, err := d.dev.RawCmd([]byte{0x30, 0x70, 0x66, 0x00, 0x00})
+	if err != nil {
+		return 0, err
+	}
+	return float64(resp[0]) / 100, nil
 }
 
 func (d *X10IPMIDriver) Close() error {
 	// Set fan mode OPTIMAL
+	_, err := d.dev.RawCmd([]byte{0x30, 0x45, 0x01, 0x02})
+	if err != nil {
+		return err
+	}
 	return d.IPMIDriver.Close()
 }
