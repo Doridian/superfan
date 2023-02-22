@@ -1,6 +1,6 @@
 module github.com/FoxDenHome/superfan
 
-go 1.19
+go 1.18
 
 require github.com/u-root/u-root v0.11.0
 
