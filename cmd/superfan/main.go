@@ -22,8 +22,8 @@ func main() {
 	defer ctrl.Close()
 
 	nameFilterMap := make(map[string]bool)
-	nameFilterMap["Package Id 0"] = true
-	nameFilterMap["Package Id 1"] = true
+	nameFilterMap["Package id 0"] = true
+	nameFilterMap["Package id 1"] = true
 	therm := thermal.LMSensorsDriver{
 		Aggregation: thermal.AGGREGATE_MAX,
 		NameFilter:  nameFilterMap,
