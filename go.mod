@@ -2,7 +2,7 @@ module github.com/FoxDenHome/superfan
 
 go 1.21
 
-toolchain go1.23.1
+toolchain go1.23.2
 
 require github.com/u-root/u-root v0.14.0
 
