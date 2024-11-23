@@ -19,7 +19,7 @@ func (d *FixedCurveDriver) Close() error {
 
 func (d *FixedCurveDriver) GetFanSpeedFor(temperature float64) (float64, error) {
 	for _, t := range d.Thresholds {
-		if temperature >= t.Temperature {
+		if temperature <= t.Temperature {
 			return t.Speed, nil
 		}
 	}
