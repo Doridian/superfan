@@ -74,7 +74,7 @@ func main() {
 	curve := &curve.LinearInterpolatedCurveDriver{
 		Thresholds: []*curve.FixedThreshold{
 			{
-				Temperature: 10.0,
+				Temperature: 30.0,
 				Speed:       0.03,
 			},
 			{
