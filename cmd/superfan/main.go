@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math"
 	"os"
 	"os/signal"
 	"syscall"
@@ -30,7 +31,8 @@ func runLoop(therm thermal.Driver, curve curve.Curve, ctrl control.Driver) bool 
 	}
 	log.Printf("[GET] Temperature: %.0f", temp)
 
-	if currentSpeed == speed {
+	diff := math.Abs(speed - currentSpeed)
+	if diff < 0.01 {
 		return false
 	}
 
