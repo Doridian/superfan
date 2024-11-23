@@ -28,6 +28,7 @@ func runLoop(therm thermal.Driver, curve curve.CurveDriver, ctrl control.Driver)
 		log.Printf("Error getting current fan speed: %v", err)
 		return false
 	}
+	log.Printf("[GET] Temperature: %.0f", temp)
 
 	if currentSpeed == speed {
 		return false
@@ -38,7 +39,7 @@ func runLoop(therm thermal.Driver, curve curve.CurveDriver, ctrl control.Driver)
 		log.Printf("Error setting fan speed: %v", err)
 		return false
 	}
-	log.Printf("[SET] Temperature: %.0f, Fan speed: %.0f%%", temp, speed*100)
+	log.Printf("[SET] Fan speed: %.0f%%", speed*100)
 	return true
 }
 
