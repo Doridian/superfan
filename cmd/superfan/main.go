@@ -12,7 +12,7 @@ import (
 	"github.com/FoxDenHome/superfan/drivers/thermal"
 )
 
-func runLoop(therm thermal.Driver, curve curve.CurveDriver, ctrl control.Driver) bool {
+func runLoop(therm thermal.Driver, curve curve.Curve, ctrl control.Driver) bool {
 	temp, err := therm.GetTemperature()
 	if err != nil {
 		log.Printf("Error getting temperature: %v", err)
@@ -71,8 +71,8 @@ func main() {
 	}
 	defer therm.Close()
 
-	curve := &curve.LinearInterpolatedCurveDriver{
-		Thresholds: []*curve.FixedThreshold{
+	curve := &curve.LinearInterpolated{
+		Points: []*curve.Point{
 			{
 				Temperature: 30.0,
 				Speed:       0.03,

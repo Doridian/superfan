@@ -1,24 +1,19 @@
 package curve
 
-type FixedThreshold struct {
-	Temperature float64
-	Speed       float64
+type Fixed struct {
+	Points []*Point
 }
 
-type FixedCurveDriver struct {
-	Thresholds []*FixedThreshold
-}
-
-func (d *FixedCurveDriver) Init() error {
+func (d *Fixed) Init() error {
 	return nil
 }
 
-func (d *FixedCurveDriver) Close() error {
+func (d *Fixed) Close() error {
 	return nil
 }
 
-func (d *FixedCurveDriver) GetFanSpeedFor(temperature float64) (float64, error) {
-	for _, t := range d.Thresholds {
+func (d *Fixed) GetFanSpeedFor(temperature float64) (float64, error) {
+	for _, t := range d.Points {
 		if temperature <= t.Temperature {
 			return t.Speed, nil
 		}
