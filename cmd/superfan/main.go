@@ -74,24 +74,24 @@ func main() {
 	curve := &curve.FixedCurveDriver{
 		Thresholds: []*curve.FixedThreshold{
 			{
-				Temperature: 10.0,
-				Speed:       0.03,
-			},
-			{
-				Temperature: 55.0,
-				Speed:       0.08,
-			},
-			{
-				Temperature: 65.0,
-				Speed:       0.19,
+				Temperature: 75.0,
+				Speed:       1.00,
 			},
 			{
 				Temperature: 70.0,
 				Speed:       0.63,
 			},
 			{
-				Temperature: 75.0,
-				Speed:       1.00,
+				Temperature: 65.0,
+				Speed:       0.19,
+			},
+			{
+				Temperature: 55.0,
+				Speed:       0.08,
+			},
+			{
+				Temperature: 10.0,
+				Speed:       0.03,
 			},
 		},
 	}
