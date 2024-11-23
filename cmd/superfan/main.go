@@ -31,8 +31,8 @@ func runLoop(therm thermal.Driver, curve curve.Curve, ctrl control.Driver) bool 
 	}
 	log.Printf("[GET] Temperature: %.0f", temp)
 
-	diff := math.Abs(speed - currentSpeed)
-	if diff < 0.01 {
+	speedDiff := math.Abs(speed - currentSpeed)
+	if speedDiff < 0.01 {
 		return false
 	}
 
