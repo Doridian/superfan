@@ -1,6 +1,6 @@
 module github.com/FoxDenHome/superfan
 
-go 1.21
+go 1.23.0
 
 toolchain go1.24.1
 
@@ -8,5 +8,5 @@ require github.com/u-root/u-root v0.14.0
 
 require (
 	github.com/vtolstov/go-ioctl v0.0.0-20151206205506-6be9cced4810 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 )
