@@ -11,7 +11,7 @@ RUN go mod download
 COPY . /app
 RUN go build -o /superfan ./cmd/superfan
 
-FROM alpine:3.21
+FROM alpine:3.22
 COPY LICENSE /LICENSE
 
 RUN apk add --no-cache lm-sensors
