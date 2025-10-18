@@ -11,7 +11,7 @@
           pname = "superfan";
           version = "0.1.0";
           src = ./.;
-          vendorHash = "sha256-8f32OPXLPSmXg4OxCS3U73ctIRraI3TMMez8zsU8/xQ=";
+          vendorHash =  "sha256-7xNRovpxxS1C2Y4kOS61zyur0DcWoJpue/0lZLNWpCA=";
           buildInputs = [];
         };
       in

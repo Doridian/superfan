@@ -1,8 +1,11 @@
 package control
 
 import (
+	"github.com/gofrs/flock"
 	"github.com/u-root/u-root/pkg/ipmi"
 )
+
+var lockFile = flock.New("/var/lock/ipmi.lock")
 
 type IPMIDriver struct {
 	dev         *ipmi.IPMI
