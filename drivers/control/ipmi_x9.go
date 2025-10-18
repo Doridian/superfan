@@ -1,23 +1,16 @@
 package control
 
-import "errors"
-
 type X9IPMIDriver struct {
 	lastSetSpeed byte
 	IPMIDriver
 }
 
 func (d *X9IPMIDriver) Init() error {
-	locked, err := lockFile.TryLock()
-	if err != nil {
-		return err
-	}
-	if !locked {
-		return errors.New("could not acquire IPMI lock")
-	}
-	defer lockFile.Unlock()
+	return RunLockedVoid(d.init)
+}
 
-	err = d.IPMIDriver.Init()
+func (d *X9IPMIDriver) init() error {
+	err := d.IPMIDriver.Init()
 	if err != nil {
 		return err
 	}
@@ -37,15 +30,12 @@ func (d *X9IPMIDriver) Init() error {
 }
 
 func (d *X9IPMIDriver) SetFanSpeed(speed float64) error {
-	locked, err := lockFile.TryLock()
-	if err != nil {
-		return err
-	}
-	if !locked {
-		return errors.New("could not acquire IPMI lock")
-	}
-	defer lockFile.Unlock()
+	return RunLockedVoid(func() error {
+		return d.setFanSpeed(speed)
+	})
+}
 
+func (d *X9IPMIDriver) setFanSpeed(speed float64) error {
 	speedByte := byte(speed * 255)
 	for i := byte(0); i < 2; i++ {
 		_, err := d.dev.RawCmd([]byte{0x30, 0x91, 0x5A, 0x03, i, speedByte})
@@ -62,17 +52,12 @@ func (d *X9IPMIDriver) GetFanSpeed() (float64, error) {
 }
 
 func (d *X9IPMIDriver) Close() error {
-	locked, err := lockFile.TryLock()
-	if err != nil {
-		return err
-	}
-	if !locked {
-		return errors.New("could not acquire IPMI lock")
-	}
-	defer lockFile.Unlock()
+	return RunLockedVoid(d.close)
+}
 
+func (d *X9IPMIDriver) close() error {
 	// Set fan mode STANDARD
-	_, err = d.dev.RawCmd([]byte{0x30, 0x45, 0x01, 0x00})
+	_, err := d.dev.RawCmd([]byte{0x30, 0x45, 0x01, 0x00})
 	if err != nil {
 		return err
 	}
