@@ -13,7 +13,7 @@ var LockRetryInterval = time.Millisecond * 10
 
 func acquireLock() (err error) {
 	var locked bool
-	var lockWaitEnd = time.Now().Add(LockTimeout)
+	lockWaitEnd := time.Now().Add(LockTimeout)
 	for time.Now().Before(lockWaitEnd) && !locked {
 		locked, err = lockFile.TryLock()
 		if err != nil || locked {
