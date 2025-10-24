@@ -1,7 +1,6 @@
 package control
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -33,15 +32,6 @@ func (d *X10IPMIDriver) SetFanSpeed(speed float64) error {
 }
 
 func (d *X10IPMIDriver) setFanSpeed(speed float64) error {
-	locked, err := lockFile.TryLock()
-	if err != nil {
-		return err
-	}
-	if !locked {
-		return errors.New("could not acquire IPMI lock")
-	}
-	defer lockFile.Unlock()
-
 	speedByte := byte(speed * 100)
 	for i := byte(0); i < 2; i++ {
 		_, err := d.dev.RawCmd([]byte{0x30, 0x70, 0x66, 0x01, i, speedByte})
