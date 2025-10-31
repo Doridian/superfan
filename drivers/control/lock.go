@@ -7,7 +7,7 @@ import (
 	"github.com/gofrs/flock"
 )
 
-var lockFile = flock.New("/var/lock/ipmi.lock")
+var lockFile = flock.New("/var/lock/superfan/ipmi.lock")
 var LockTimeout = time.Second * 10
 var LockRetryInterval = time.Millisecond * 10
 
