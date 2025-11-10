@@ -11,5 +11,5 @@ require (
 
 require (
 	github.com/vtolstov/go-ioctl v0.0.0-20151206205506-6be9cced4810 // indirect
-	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
 )
